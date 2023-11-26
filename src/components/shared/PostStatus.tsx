@@ -11,12 +11,12 @@ import React, { useEffect, useState } from "react";
 import Loader from "./Loader";
 
 type PostStatusPrps = {
-  post: Models.Document;
+  post?: Models.Document;
 };
 
 const PostStatus = ({ post }: PostStatusPrps) => {
   const { user } = useUserContext();
-  const likesList = post.likes.map((user: Models.Document) => user.$id);
+  const likesList = post?.likes.map((user: Models.Document) => user.$id);
   const [likes, setLikes] = useState(likesList);
   const [isSaved, setIsSaved] = useState(false);
 
@@ -28,7 +28,7 @@ const PostStatus = ({ post }: PostStatusPrps) => {
   const { data: currentUser } = useGetCurrentUser();
 
   const savedPostRecord = currentUser?.save.find(
-    (record: Models.Document) => record.post.$id === post.$id
+    (record: Models.Document) => record.post.$id === post?.$id
   );
 
   useEffect(() => {
@@ -49,7 +49,7 @@ const PostStatus = ({ post }: PostStatusPrps) => {
     }
 
     setLikes(likesArray);
-    likePost({ postId: post.$id, likesArray });
+    likePost({ postId: post?.$id || "", likesArray });
   };
 
   const handleSavePost = (e: React.MouseEvent) => {
@@ -59,7 +59,7 @@ const PostStatus = ({ post }: PostStatusPrps) => {
       setIsSaved(false);
       deleteSavedPost(savedPostRecord.$id);
     } else {
-      savePost({ postId: post.$id, userId: user.id });
+      savePost({ postId: post?.$id || "", userId: user.id });
       setIsSaved(true);
     }
   };

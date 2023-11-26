@@ -2,12 +2,14 @@ import { multiFormatDateString } from "@/lib/utils";
 import { Models } from "appwrite";
 import { Link } from "react-router-dom";
 import PostStatus from "./PostStatus";
+import { useUserContext } from "@/context/AuthContext";
 
 type PostCardProps = {
   post: Models.Document;
 };
 
 const PostCard = ({ post }: PostCardProps) => {
+  const { user } = useUserContext();
   return (
     <div className="post-card">
       <div className="flex-between">
@@ -22,9 +24,11 @@ const PostCard = ({ post }: PostCardProps) => {
             />
           </Link>
           <div className="flex flex-col">
-            <p className="base-medium lg:body-bold text-light-1">
-              {post.creator.name}
-            </p>
+            <Link to={`/profile/${post.creator.$id}`}>
+              <p className="base-medium lg:body-bold text-light-1">
+                {post.creator.name}
+              </p>
+            </Link>
             <div className="flex-center gap-2 text-light-3">
               <p className="subtle-semibold lg:small-regular">
                 {multiFormatDateString(post.$createdAt)}
@@ -36,7 +40,10 @@ const PostCard = ({ post }: PostCardProps) => {
             </div>
           </div>
         </div>
-        <Link to={`/update-post/${post.$id}`} className="">
+        <Link
+          to={`/update-post/${post.$id}`}
+          className={`${user.id !== post.creator.$id} && "hidden"`}
+        >
           <img src="/assets/icons/edit.svg" alt="edit" width={20} />
         </Link>
       </div>
