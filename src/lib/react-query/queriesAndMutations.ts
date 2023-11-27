@@ -7,7 +7,6 @@ import {
 } from '@tanstack/react-query'
 import { createPost, createUserAccount, deleteSavedPost, getCurrentUser, getInfinitePosts, getPostById, getRecentPosts, likePost, savePost, searchPosts, signInAccount, signOutAccount, updatePost } from '../appwrite/api'
 import { QUERY_KEYS } from './queryKeys'
-import { useEffect } from 'react'
 
 export const useCreateUserAccount = () => {
     return useMutation({
