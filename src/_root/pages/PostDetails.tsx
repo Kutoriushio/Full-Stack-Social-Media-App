@@ -2,16 +2,24 @@ import Loader from "@/components/shared/Loader";
 import PostStatus from "@/components/shared/PostStatus";
 import { Button } from "@/components/ui/button";
 import { useUserContext } from "@/context/AuthContext";
-import { useGetPostById } from "@/lib/react-query/queriesAndMutations";
+import {
+  useDeletePost,
+  useGetPostById,
+} from "@/lib/react-query/queriesAndMutations";
 import { multiFormatDateString } from "@/lib/utils";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
 const PostDetails = () => {
   const { id } = useParams();
   const { data: post, isPending: isLoading } = useGetPostById(id || "");
+  const { mutate: deletePost } = useDeletePost();
   const { user } = useUserContext();
+  const navigate = useNavigate();
 
-  const handleDeletePost = () => {};
+  const handleDeletePost = () => {
+    deletePost({ postId: id, imageId: post?.imageId });
+    navigate(-1);
+  };
 
   return (
     <div className="post_details-container">
@@ -54,7 +62,7 @@ const PostDetails = () => {
               <div className="flex-center gap-4">
                 <Link
                   to={`/update-post/${post?.$id}`}
-                  className={`${user.id !== post?.creator.$id} && "hidden"`}
+                  className={`${user.id !== post?.creator.$id && "hidden"}`}
                 >
                   <img src="/assets/icons/edit.svg" alt="edit" width={24} />
                 </Link>
@@ -63,8 +71,8 @@ const PostDetails = () => {
                   onClick={handleDeletePost}
                   variant="ghost"
                   className={`post_details-delete_btn ${
-                    user.id !== post?.creator.$id
-                  } && "hidden"`}
+                    user.id !== post?.creator.$id && "!hidden"
+                  }`}
                 >
                   <img src="/assets/icons/delete.svg" alt="delete" width={24} />
                 </Button>
