@@ -20,6 +20,7 @@ export type INavLink = {
     imageId: string;
     imageUrl: URL | string;
     file: File[];
+    username: string;
   };
   
   export type INewPost = {

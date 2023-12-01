@@ -1,5 +1,32 @@
+import ProfileForm from "@/components/forms/ProfileForm";
+import Loader from "@/components/shared/Loader";
+
+import { useGetCurrentUser } from "@/lib/react-query/queriesAndMutations";
+
 const UpdateProfile = () => {
-  return <div>UpdataProfile</div>;
+  const { data: currentUser } = useGetCurrentUser();
+
+  if (!currentUser) {
+    return (
+      <div className="w-full h-full flex-center">
+        <Loader />
+      </div>
+    );
+  }
+  return (
+    <div className="common-container">
+      <div className="flex-start w-full max-w-5xl gap-3">
+        <img
+          src="/assets/icons/edit.svg"
+          alt="edit"
+          width={36}
+          className="invert-white"
+        />
+        <h2 className="h3-bold md:h2-bold text-left w-full">Edit Profile</h2>
+      </div>
+      <ProfileForm currentUser={currentUser} />
+    </div>
+  );
 };
 
 export default UpdateProfile;
