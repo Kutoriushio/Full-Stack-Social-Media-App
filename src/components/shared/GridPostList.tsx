@@ -21,20 +21,20 @@ const GridPostList = ({
             <img
               src={post.imageUrl}
               alt="post"
-              className="h-full w-full object-cover"
+              className="h-full w-full object-cover object-top"
             />
           </Link>
 
           <div className="grid-post_user">
             {showUser && (
-              <div className="flex items-center justify-start gap-2 flex-1">
+              <div className="flex items-center justify-start gap-2 flex-1 mt-1">
                 <img
                   src={
                     post.creator.imageUrl ||
                     "assets/icons/profile-placeholder.svg"
                   }
                   alt="creator"
-                  className="h-8 w-8 rounded-full"
+                  className="h-8 w-8 rounded-full object-cover object-top"
                 />
                 <p className="line-clamp-1">{post.creator.name}</p>
               </div>

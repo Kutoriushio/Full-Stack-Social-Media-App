@@ -12,7 +12,7 @@ const Profile = () => {
   const { data: user } = useGetUserById(id || "");
   const { user: currentUser } = useUserContext();
   const { pathname } = useLocation();
-
+  console.log(currentUser);
   if (!user) {
     return (
       <div className="flex-center w-full h-full">
@@ -26,7 +26,7 @@ const Profile = () => {
         <img
           src={user.imageUrl || "/assets/icons/profile-placeholder.svg"}
           alt="profile"
-          className="w-28 h-28 lg:w-36 lg:h-36 rounded-full"
+          className="w-28 h-28 lg:w-36 lg:h-36 rounded-full object-cover object-top"
         />
         <div className="flex flex-col justify-between md:mt-2">
           <h1 className="text-center xl:text-left h3-bold md:h1-semibold w-full">

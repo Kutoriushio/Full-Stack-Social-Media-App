@@ -12,7 +12,7 @@ const UserCard = ({ creator }: UserCardProps) => {
       <img
         src={creator.imageUrl || "/assets/icons/placeholder.svg"}
         alt="creator"
-        className="w-14 rounded-full"
+        className="w-14 h-14 rounded-full object-cover object-top"
       />
 
       <div>

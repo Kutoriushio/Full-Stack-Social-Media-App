@@ -20,7 +20,7 @@ const PostCard = ({ post }: PostCardProps) => {
                 post.creator?.imageUrl || "assets/icons/profile-placeholder.svg"
               }
               alt="creator"
-              className="w-12 rounded-full"
+              className="w-12 h-12 rounded-full object-cover object-top"
             />
           </Link>
           <div className="flex flex-col">

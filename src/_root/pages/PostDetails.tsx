@@ -1,3 +1,4 @@
+import GridPostList from "@/components/shared/GridPostList";
 import Loader from "@/components/shared/Loader";
 import PostStatus from "@/components/shared/PostStatus";
 import { Button } from "@/components/ui/button";
@@ -5,6 +6,7 @@ import { useUserContext } from "@/context/AuthContext";
 import {
   useDeletePost,
   useGetPostById,
+  useGetUserPosts,
 } from "@/lib/react-query/queriesAndMutations";
 import { multiFormatDateString } from "@/lib/utils";
 import { Link, useNavigate, useParams } from "react-router-dom";
@@ -12,7 +14,14 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 const PostDetails = () => {
   const { id } = useParams();
   const { data: post, isPending: isLoading } = useGetPostById(id || "");
+  const { data: userPosts, isPending: isUserPostsLoading } = useGetUserPosts(
+    post?.creator.$id
+  );
+
   const { mutate: deletePost } = useDeletePost();
+  const relatedPosts = userPosts?.documents.filter(
+    (userPost) => userPost.$id !== id
+  );
   const { user } = useUserContext();
   const navigate = useNavigate();
 
@@ -38,7 +47,7 @@ const PostDetails = () => {
                       "assets/icons/profile-placeholder.svg"
                     }
                     alt="creator"
-                    className="w-8 h-8 lg:w-12 lg:h-12 rounded-full"
+                    className="w-8 h-8 lg:w-12 lg:h-12 rounded-full object-cover object-top"
                   />
                 </Link>
                 <div className="flex flex-col gap-1">
@@ -98,6 +107,22 @@ const PostDetails = () => {
           </div>
         </div>
       )}
+
+      <div className="w-full max-w-5xl">
+        <hr className="border w-full border-dark-4/80" />
+        <h3 className="body-bold md:h3-bold w-full my-10">
+          More Related Posts
+        </h3>
+        {isUserPostsLoading ? (
+          <Loader />
+        ) : relatedPosts?.length === 0 ? (
+          <p className="text-light-4">
+            {post?.creator.username} has no more posts
+          </p>
+        ) : (
+          <GridPostList posts={relatedPosts} />
+        )}
+      </div>
     </div>
   );
 };

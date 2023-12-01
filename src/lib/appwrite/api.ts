@@ -492,3 +492,20 @@ export async function updateUser(user: IUpdateUser) {
     console.log(error)
   }
 }
+
+export async function getUserPosts(userId: string) {
+  if(!userId) return
+  try {
+    const posts = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.postsCollectionId,
+      [Query.equal("creator", userId), Query.orderDesc("$createdAt")]
+    );
+
+    if(!posts) throw Error;
+
+    return posts
+  } catch (error) {
+    console.log(error)
+  }
+}
