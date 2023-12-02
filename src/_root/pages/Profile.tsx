@@ -1,18 +1,51 @@
 import Loader from "@/components/shared/Loader";
 import StatBlock from "@/components/shared/StatBlock";
 import { Button } from "@/components/ui/button";
-import { useUserContext } from "@/context/AuthContext";
-import { useGetUserById } from "@/lib/react-query/queriesAndMutations";
+import {
+  useFollowUser,
+  useGetCurrentUser,
+  useGetUserById,
+} from "@/lib/react-query/queriesAndMutations";
 import { Link, Route, Routes, useLocation, useParams } from "react-router-dom";
 import { LikedPosts } from ".";
 import GridPostList from "@/components/shared/GridPostList";
+import { useState } from "react";
 
 const Profile = () => {
   const { id } = useParams();
   const { data: user } = useGetUserById(id || "");
-  const { user: currentUser } = useUserContext();
+  const { data: currentUser } = useGetCurrentUser();
   const { pathname } = useLocation();
-  console.log(currentUser);
+  const followingList = currentUser?.following;
+  const followerList = user?.follower;
+  const [following, setFollowing] = useState(
+    currentUser?.following.includes(user?.$id)
+  );
+  const { mutate: follow, isPending: isFollowing } = useFollowUser();
+
+  const handleFollow = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+    let followingArray = [...followingList];
+    let followerArray = [...followerList];
+    if (currentUser && user) {
+      if (!following) {
+        setFollowing(true);
+        followingArray.push(user?.$id);
+        followerArray.push(currentUser.$id);
+      } else {
+        setFollowing(false);
+        followingArray = followingArray.filter((id) => id !== user?.$id);
+        followerArray = followerArray.filter((id) => id !== currentUser?.$id);
+      }
+      follow({
+        followerId: currentUser?.$id,
+        followingId: user?.$id,
+        followerArray: followerArray,
+        followingArray: followingArray,
+      });
+    }
+  };
   if (!user) {
     return (
       <div className="flex-center w-full h-full">
@@ -38,8 +71,8 @@ const Profile = () => {
 
           <div className="flex-center gap-8 xl:justify-start mt-6 flex-wrap">
             <StatBlock value={user.posts.length} label="Posts" />
-            <StatBlock value={20} label="Followers" />
-            <StatBlock value={20} label="Followings" />
+            <StatBlock value={user.follower.length} label="Followers" />
+            <StatBlock value={user.following.length} label="Followings" />
           </div>
 
           <p className="small-medium md:base-medium text-center xl:text-left mt-7 max-w-screen-sm">
@@ -47,11 +80,11 @@ const Profile = () => {
           </p>
         </div>
         <div className="flex justify-center gap-4 mt-2.5">
-          <div className={`${user.$id !== currentUser.id && "hidden"}`}>
+          <div className={`${user.$id !== currentUser?.$id && "hidden"}`}>
             <Link
               to={`/update-profile/${user.$id}`}
               className={`flex-center bg-dark-4 px-5 text-light-1 gap-2 rounded-lg h-12 ${
-                user.$id !== currentUser.id && "hidden"
+                user.$id !== currentUser?.id && "hidden"
               }`}
             >
               <img src="/assets/icons/edit.svg" alt="edit" width={20} />
@@ -60,9 +93,16 @@ const Profile = () => {
               </p>
             </Link>
           </div>
-          <div className={`${user.$id === currentUser.id && "hidden"}`}>
-            <Button type="button" className="shad-button_primary px-5">
-              Follow
+          <div className={`${user.$id === currentUser?.$id && "hidden"}`}>
+            <Button
+              type="button"
+              size="sm"
+              className={`shad-button_primary px-4 ${
+                following ? "!bg-gray-500" : ""
+              }`}
+              onClick={handleFollow}
+            >
+              {isFollowing ? <Loader /> : following ? "Followed" : "Follow"}
             </Button>
           </div>
         </div>

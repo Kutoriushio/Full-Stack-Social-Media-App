@@ -56,3 +56,10 @@ export type INavLink = {
     username: string;
     password: string;
   };
+
+  export type IFollow = {
+    followerId: string,  // User who is following other user
+    followingId: string,  // User who is being followed
+    followerArray: string[],  // Being followed user's followers
+    followingArray: string[] // User's following users
+  }

@@ -1,11 +1,11 @@
-import { INewPost, INewUser, IUpdatePost, IUpdateUser } from '@/types'
+import { IFollow, INewPost, INewUser, IUpdatePost, IUpdateUser } from '@/types'
 import {
     useQuery,
     useMutation,
     useQueryClient,
     useInfiniteQuery
 } from '@tanstack/react-query'
-import { createPost, createUserAccount, deletePost, deleteSavedPost, getCurrentUser, getInfinitePosts, getPostById, getRecentPosts, getUserById, getUserPosts, getUsers, likePost, savePost, searchPosts, signInAccount, signOutAccount, updatePost, updateUser } from '../appwrite/api'
+import { createPost, createUserAccount, deletePost, deleteSavedPost, followUser, getCurrentUser, getInfinitePosts, getPostById, getRecentPosts, getUserById, getUserPosts, getUsers, likePost, savePost, searchPosts, signInAccount, signOutAccount, updatePost, updateUser } from '../appwrite/api'
 import { QUERY_KEYS } from './queryKeys'
 
 export const useCreateUserAccount = () => {
@@ -208,5 +208,20 @@ export const useGetUserPosts = (userId: string) => {
         queryKey: [QUERY_KEYS.GET_USER_POSTS, userId],
         queryFn: () => getUserPosts(userId),
         enabled: !!userId
+    })
+}
+
+export const useFollowUser = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: ({followerId, followingId, followerArray, followingArray}: IFollow) => followUser(followerId, followingId, followerArray, followingArray),
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: [QUERY_KEYS.GET_CURRENT_USER]
+            });
+            queryClient.invalidateQueries({
+                queryKey:[QUERY_KEYS.GET_USERS]
+            })
+        }
     })
 }

@@ -509,3 +509,32 @@ export async function getUserPosts(userId: string) {
     console.log(error)
   }
 }
+
+export async function followUser(followerId: string, followingId: string, followerArray: string[], followingArray: string[]) {
+  try {
+    const updateFollowed = await databases.updateDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.usersCollectionId,
+      followingId,
+      {
+        follower: followerArray
+      }
+    )
+
+    if (!updateFollowed) throw Error
+
+    const updateFollower = await databases.updateDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.usersCollectionId,
+      followerId,
+      {
+        following: followingArray
+      }
+    )
+
+    if(!updateFollower) throw Error
+    return ({status: "ok"})
+  } catch (error) {
+    console.log(error)
+  }
+}
